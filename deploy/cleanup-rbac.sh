@@ -41,47 +41,57 @@ SERVICE_ACCOUNTS=(
     pgo-backrest
 )
 
+echo "Deleting cluster roles.."
 for cr in "${CLUSTER_ROLES[@]}"
 do
-    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get clusterrole ${cr?} 2> /dev/null
+    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get clusterrole ${cr?} 2>&1 /dev/null
     if [[ $? -eq 0 ]]
     then
+        echo "Cluster role ${cr?} found.  Deleting.."
         ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete clusterrole ${cr?}
     fi
 done
 
+echo "Deleting cluster role bindings.."
 for crb in "${CLUSTER_ROLE_BINDINGS[@]}"
 do
-    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get clusterrolebindings ${crb?} 2> /dev/null
+    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get clusterrolebindings ${crb?} 2>&1 /dev/null
     if [[ $? -eq 0 ]]
     then
-        ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete clusterrolebinding ${cr?}
+        echo "Cluster role binding ${crb?} found.  Deleting.."
+        ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete clusterrolebinding ${crb?}
     fi
 done
 
+echo "Deleting roles.."
 for role in "${ROLES[@]}"
 do
-    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get role ${role?} 2> /dev/null
+    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get role ${role?} 2>&1 /dev/null
     if [[ $? -eq 0 ]]
     then
+        echo "Role ${role?} found.  Deleting.."
         ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete role ${role?}
     fi
 done
 
+echo "Deleting role bindings.."
 for rb in "${ROLE_BINDINGS[@]}"
 do
-    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get rolebindings ${rb?} 2> /dev/null
+    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get rolebindings ${rb?} 2>&1 /dev/null
     if [[ $? -eq 0 ]]
     then
+        echo "Role binding ${rb?} found.  Deleting.."
         ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete rolebinding ${rb?}
     fi
 done
 
+echo "Deleting service accounts.."
 for sa in "${SERVICE_ACCOUNTS[@]}"
 do
-    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get serviceaccounts ${sa?} 2> /dev/null
+    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get serviceaccounts ${sa?} 2>&1 /dev/null
     if [[ $? -eq 0 ]]
     then
+        echo "Service account ${sa?} found.  Deleting.."
         ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete serviceaccount ${sa?}
     fi
 done

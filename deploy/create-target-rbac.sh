@@ -22,9 +22,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo ""
 echo "creating pgo-backrest-repo-config in namespace ${1?}"
 
-${PGO_CMD?} --namespace=$1 delete secret pgo-backrest-repo-config 
+${PGO_CMD?} --namespace=${1?} delete secret pgo-backrest-repo-config 
 
-${PGO_CMD?} --namespace=$1 create secret generic pgo-backrest-repo-config \
+${PGO_CMD?} --namespace=${1?} create secret generic pgo-backrest-repo-config \
 	--from-file=config=${PGOROOT?}/conf/pgo-backrest-repo/config \
 	--from-file=ssh_host_rsa_key=${PGOROOT?}/conf/pgo-backrest-repo/ssh_host_rsa_key \
 	--from-file=authorized_keys=${PGOROOT?}/conf/pgo-backrest-repo/authorized_keys \
@@ -39,7 +39,5 @@ echo "operator is assumed to be deployed into ${2?}"
 
 export TARGET_NAMESPACE=${1?}
 export PGO_OPERATOR_NAMESPACE=${2?}
-expenv -f ${DIR?}/rbac.yaml | ${PGO_CMD?} --namespace=$1 delete -f -
-
-expenv -f ${DIR?}/rbac.yaml | ${PGO_CMD?} --namespace=$1 create -f -
-
+expenv -f ${DIR?}/rbac.yaml | ${PGO_CMD?} --namespace=${1?} delete -f -
+expenv -f ${DIR?}/rbac.yaml | ${PGO_CMD?} --namespace=${1?} create -f -
