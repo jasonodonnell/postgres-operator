@@ -12,48 +12,47 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-$DIR/cleanup-rbac.sh
+${DIR?}/cleanup-rbac.sh
 
 # see if CRDs need to be created
-$PGO_CMD get crd pgclusters.crunchydata.com
-if [ $? -eq 1 ]; then
-	$PGO_CMD create -f $DIR/crd.yaml
+${PGO_CMD?} get crd pgclusters.crunchydata.com
+if [[ $? -eq 1 ]]
+then
+	${PGO_CMD?} create -f ${DIR?}/crd.yaml
 fi
 
 # create the cluster roles one time for the entire Kube cluster
-expenv -f $DIR/cluster-roles.yaml | $PGO_CMD create -f -
+expenv -f ${DIR?}/cluster-roles.yaml | ${PGO_CMD?} create -f -
 
 # create the Operator service accounts
-expenv -f $DIR/service-accounts.yaml | $PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE create -f -
+expenv -f ${DIR?}/service-accounts.yaml | ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} create -f -
 
 # create the cluster role bindings to the Operator service accounts
 # postgres-operator and pgo-backrest, here we are assuming a single
 # Operator in the PGO_OPERATOR_NAMESPACE env variable
-expenv -f $DIR/cluster-role-bindings.yaml | $PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE create -f -
+expenv -f ${DIR?}/cluster-role-bindings.yaml | ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} create -f -
 
 # create the keys used for pgo API
-source $DIR/gen-api-keys.sh
+source ${DIR?}/gen-api-keys.sh
 
 # create the sshd keys for pgbackrest repo functionality
-source $DIR/gen-sshd-keys.sh
+source ${DIR?}/gen-sshd-keys.sh
 
 # create a pgo-backrest-repo-config Secret into each namespace the
 # Operator will be watching
 
-IFS=', ' read -r -a array <<< "$NAMESPACE"
+IFS=', ' read -r -a array <<< "${NAMESPACE?}"
 
 echo ""
 echo "create pgo-backrest-repo-config Secret into each namespace the Operator is watching..."
 for ns in "${array[@]}"
 do
-        $PGO_CMD get secret pgo-backrest-repo-config --namespace=$ns > /dev/null 2> /dev/null
-        if [ $? -eq 0 ]
-        then
-                $PGO_CMD delete secret  pgo-backrest-repo-config --namespace=$ns > /dev/null 2> /dev/null
-        fi
-        $DIR/create-target-rbac.sh $ns $PGO_OPERATOR_NAMESPACE
+    ${PGO_CMD?} get secret pgo-backrest-repo-config --namespace=${ns?} > /dev/null 2> /dev/null
+    if [[ $? -eq 0 ]]
+    then
+        ${PGO_CMD?} delete secret  pgo-backrest-repo-config --namespace=${ns?} > /dev/null 2> /dev/null
+    fi
+    ${DIR?}/create-target-rbac.sh ${ns?} ${PGO_OPERATOR_NAMESPACE?}
 done
-

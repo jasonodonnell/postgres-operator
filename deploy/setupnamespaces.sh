@@ -14,33 +14,33 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-IFS=', ' read -r -a array <<< "$PGO_OPERATOR_NAMESPACE"
+IFS=', ' read -r -a array <<< "${PGO_OPERATOR_NAMESPACE?}"
 
 echo "creating namespaces to deploy the Operator into..."
 for ns in "${array[@]}"
 do
-	$PGO_CMD get namespace $ns > /dev/null 2> /dev/null
-	if [ $? -eq 0 ]
+	${PGO_CMD?} get namespace $ns > /dev/null 2> /dev/null
+	if [[ $? -eq 0 ]]
 	then
-		echo namespace $ns is already created
+		echo "namespace $ns is already created"
 	else
-		$PGO_CMD create namespace $ns > /dev/null
-		echo namespace $ns created
+		${PGO_CMD?} create namespace ${ns?} > /dev/null
+		echo "namespace ${ns?} created"
 	fi
 done
 
-IFS=', ' read -r -a array <<< "$NAMESPACE"
+IFS=', ' read -r -a array <<< "${NAMESPACE?}"
 
 echo ""
 echo "creating namespaces for the Operator to watch and create PG clusters into..."
 for ns in "${array[@]}"
 do
-	$PGO_CMD get namespace $ns > /dev/null 2> /dev/null
+	${PGO_CMD?} get namespace ${ns?} > /dev/null 2> /dev/null
 	if [ $? -eq 0 ]
 	then
-		echo namespace $ns is already created
+		echo "namespace ${ns?} is already created"
 	else
-		$PGO_CMD create namespace $ns > /dev/null
-		echo namespace $ns created
+		${PGO_CMD?} create namespace ${ns?} > /dev/null
+		echo "namespace ${ns?} created"
 	fi
 done

@@ -13,13 +13,11 @@
 # limitations under the License.
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+LOC=${PGOROOT?}/conf/pgo-backrest-repo
 
-LOC=$PGOROOT/conf/pgo-backrest-repo
+ssh-keygen -t rsa -f ${LOC?}/ssh_host_rsa_key -N ''
 
-#ssh-keygen -f $LOC/id_rsa -t rsa -N ''
-ssh-keygen -t rsa -f $LOC/ssh_host_rsa_key -N ''
+cp ${LOC?}/ssh_host_rsa_key ${LOC?}/id_rsa
+cp ${LOC?}/ssh_host_rsa_key.pub ${LOC?}/id_rsa.pub
 
-cp $LOC/ssh_host_rsa_key $LOC/id_rsa
-cp $LOC/ssh_host_rsa_key.pub $LOC/id_rsa.pub
-
-cp $LOC/id_rsa.pub $LOC/authorized_keys
+cp ${LOC?}/id_rsa.pub ${LOC?}/authorized_keys

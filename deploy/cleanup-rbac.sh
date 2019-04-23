@@ -14,72 +14,74 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get serviceaccount postgres-operator 
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete serviceaccount postgres-operator
-fi
+CLUSTER_ROLES=(
+    pgopclusterrole
+    pgopclusterrolesecret
+    pgopclusterrolecrd
+)
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get serviceaccount pgo-backrest 
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete serviceaccount pgo-backrest
-fi
+CLUSTER_ROLE_BINDINGS=(
+    pgopclusterrole-${PGO_OPERATOR_NAMESPACE?}
+    pgopclusterrolesecret-${PGO_OPERATOR_NAMESPACE?}
+    pgopclusterrolecrd-${PGO_OPERATOR_NAMESPACE?}
+)
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get clusterrole pgopclusterrole  
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete clusterrole pgopclusterrole 
-fi
+ROLES=(
+    pgo-role
+    pgo-backrest-role
+)
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get clusterrole pgopclusterrolesecret
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete clusterrole pgopclusterrolesecret 
-fi
+ROLE_BINDINGS=(
+    pgo-role-binding-${PGO_OPERATOR_NAMESPACE?}
+    pgo-backrest-role-binding-${PGO_OPERATOR_NAMESPACE?}
+)
 
+SERVICE_ACCOUNTS=(
+    postgres-operator
+    pgo-backrest
+)
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get clusterrole pgopclusterrolecrd 
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete clusterrole pgopclusterrolecrd
-fi
+for cr in "${CLUSTER_ROLES[@]}"
+do
+    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get clusterrole ${cr?} 2> /dev/null
+    if [[ $? -eq 0 ]]
+    then
+        ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete clusterrole ${cr?}
+    fi
+done
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get clusterrolebinding pgopclusterbinding-$PGO_OPERATOR_NAMESPACE  
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete clusterrolebinding pgopclusterbinding-$PGO_OPERATOR_NAMESPACE 
-fi
+for crb in "${CLUSTER_ROLE_BINDINGS[@]}"
+do
+    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get clusterrolebindings ${crb?} 2> /dev/null
+    if [[ $? -eq 0 ]]
+    then
+        ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete clusterrolebinding ${cr?}
+    fi
+done
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get clusterrolebinding pgopclusterbindingcrd-$PGO_OPERATOR_NAMESPACE
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete clusterrolebinding pgopclusterbindingcrd-$PGO_OPERATOR_NAMESPACE
-fi
+for role in "${ROLES[@]}"
+do
+    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get role ${role?} 2> /dev/null
+    if [[ $? -eq 0 ]]
+    then
+        ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete role ${role?}
+    fi
+done
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get role pgo-role 
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete role pgo-role
-fi
+for rb in "${ROLE_BINDINGS[@]}"
+do
+    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get rolebindings ${rb?} 2> /dev/null
+    if [[ $? -eq 0 ]]
+    then
+        ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete rolebinding ${rb?}
+    fi
+done
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get rolebinding pgo-role-binding 
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete rolebinding pgo-role-binding
-fi
-
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get role pgo-backrest-role 
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete role pgo-backrest-role
-fi
-
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get rolebinding pgo-backrest-role-binding 
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete rolebinding pgo-backrest-role-binding
-fi
-
-sleep 5
-
+for sa in "${SERVICE_ACCOUNTS[@]}"
+do
+    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get serviceaccounts ${sa?} 2> /dev/null
+    if [[ $? -eq 0 ]]
+    then
+        ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete serviceaccount ${sa?}
+    fi
+done

@@ -14,9 +14,8 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get pgbackups
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get pgclusters
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get pgreplicas
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get pgpolicies 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get pgpolicylogs
-
+${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get pgbackups
+${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get pgclusters
+${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get pgreplicas
+${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get pgpolicies 
+${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get pgpolicylogs

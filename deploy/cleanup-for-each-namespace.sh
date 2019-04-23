@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-$PGO_CMD --namespace=$NAMESPACE delete secret generic pgo-backrest-repo-config 
+${PGO_CMD?} --namespace=${NAMESPACE?} delete secret generic pgo-backrest-repo-config 

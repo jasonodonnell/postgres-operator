@@ -14,35 +14,57 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get secret/pgo-backrest-repo-config 2> /dev/null
+CONFIGMAPS=(
+    pgo-config
+)
 
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete secret/pgo-backrest-repo-config
-fi
+DEPLOYMENTS=(
+    postgres-operator
+)
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get secret pgo.tls 2> /dev/null
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete secret pgo.tls
-fi
+SECRETS=(
+    pgo-backrest-repo-config
+    pgo.tls
+)
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get configmap/pgo-config 2> /dev/null
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete configmap/pgo-config
-fi
+SERVICES=(
+    postgres-operator
+)
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get service/postgres-operator 2> /dev/null
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete service/postgres-operator
-fi
+for cm in "${CONFIGMAPS[@]}"
+do
+    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get configmaps ${cm?} 2> /dev/null
+    if [[ $? -eq 0 ]]
+    then
+        ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete configmap ${cm?}
+    fi
+done
 
-$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE get deployment/postgres-operator 2> /dev/null
-if [ $? -eq 0 ]
-then
-	$PGO_CMD --namespace=$PGO_OPERATOR_NAMESPACE delete deployment/postgres-operator
-fi
+for deployment in "${DEPLOYMENTS[@]}"
+do
+    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get deployments ${deployment?} 2> /dev/null
+    if [[ $? -eq 0 ]]
+    then
+        ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete deployment ${deployment?}
+    fi
+done
+
+for secret in "${SECRETS[@]}"
+do
+    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get secrets ${secret?} 2> /dev/null
+    if [[ $? -eq 0 ]]
+    then
+        ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete secret ${secrets?}
+    fi
+done
+
+for service in "${SERVICES[@]}"
+do
+    ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} get services ${service?} 2> /dev/null
+    if [[ $? -eq 0 ]]
+    then
+        ${PGO_CMD?} --namespace=${PGO_OPERATOR_NAMESPACE?} delete service ${service?}
+    fi
+done
 
 sleep 5
