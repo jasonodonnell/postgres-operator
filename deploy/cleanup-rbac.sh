@@ -21,9 +21,9 @@ CLUSTER_ROLES=(
 )
 
 CLUSTER_ROLE_BINDINGS=(
-    pgopclusterrole-${PGO_OPERATOR_NAMESPACE?}
-    pgopclusterrolesecret-${PGO_OPERATOR_NAMESPACE?}
-    pgopclusterrolecrd-${PGO_OPERATOR_NAMESPACE?}
+    pgopclusterbinding-${PGO_OPERATOR_NAMESPACE?}
+    pgopclusterbindingesecret-${PGO_OPERATOR_NAMESPACE?}
+    pgopclusterbindingcrd-${PGO_OPERATOR_NAMESPACE?}
 )
 
 ROLES=(
